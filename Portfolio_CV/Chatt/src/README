@@ -1,0 +1,59 @@
+Projekt: Prosty chat do komunikacji uzytkownikow
+Autor: Mikołaj Krotowski
+
+
+Co jest zrobione na dziś : 27.02
+
+Klasa serwer: Głowna klasa serce całego kodu to serwer bedzie obsługiwał wszystkie wiadomosci
+
+    Metody :
+        savelogs(): służy do zachowywania wiadomości danego użytkwoniak z innym użytkownikiem typ void
+
+        everwriter(): sprawdza czy kiedykolwiek dwójka uzytkowników keidykolwiek z sobą pisała zwraca nazwe zapisanej rozmowy
+        $$ Problem do naprawy towrzymy zawsze 1chat2 lub 2chat1 zmienic logike na zapisywanie chatu jako mniejsza liczba chat wieksza liczba $$
+
+        main(): Głowny serwer na ktorym jest wszystko odpalane
+
+        ifChat() metoda ma służyć do znajdywania chatów które już istnieje miedzy dwoma uzytkownikami typ zwracany Boolena
+
+        FindChat() - słóży pomocnie przy wyświetlaniu chatu do uzytkownika laduje ona na ArrayList konwersacje z pliku a nastpnie
+        obiekt ArrayList jest przesyłany do uzytkownika
+
+        Customer_Serivice(Socket socket) - słóży do obsługi klienta każdy kto sie loguje zostaje obsłóżony jest to tak naprawde wczesniej napisanty main z
+        obsługą użytkownika jest w stanie odczytywac wiadomosci i zapisywac je w pliku jak i wlasnie wyslac wiadomosc do uztkownika
+
+    Wyjatki:
+
+       ChatInitializationException: Błąd wyrzucany w momencie gdy uzytkownik chce wysłać wiadmosc do samego siebie narazie nie przeiwduje takiej opcji
+
+       NotFoundOperationException:  Błąd wyrzucany w momencie gdy ktos spróbuje uzyc operacji ktorej nie ma to znaczy wyjdzie poza wyslij doczytaj
+                                     *trzeba dodac osbługiwanie i po prostu ponowne uzycie ale to pozniej
+
+
+
+
+
+
+
+Klasa Wiadomosc: to ta klasa słuzy za za dostarczneie informajci od uzytkowniak potem nazwe trzeba zmienic ale to potem
+
+    Metody :
+        Wyślij(): słuzy do wyslania wiadomosci od uzytkowniak informajce w niej to ID_uzytkownika, klient czyli odbiorca , operacja ktora chcemy , oraz sama tersc wiadomosci
+
+        Jest tam prosta logika decydowania ze jesli chcemy wysalc wiadomosc to metoda sie odrazu konczy ewnetualnie jesli chcemy odczytac to czekamy na liste do odbioru
+
+Klasa Rang: Pomocnicza klasa do zapisywania jakie ID maja ze soba chat i w sumie to tyle
+
+Klasa Uzytkownik:To jego dane są przesyłane ma w sobie setery i getery w sumie moglismy uzyc recordu a nie sammeu to pisac ale no juz trudno niech tak zostanie mozliwe ze potem
+                przyda sie to do jakeigos logowanie a jak nie to sie usunike wszystko sie okaze z czasem dodawania
+
+
+Co trzeba dodać na dzień dzisiejszy zarys w głowie:
+
+        *dodanie javadoc
+        *porpawnie wypisywania na serwer log
+        *dodanie warunkow na operacje: wysyaleni , odczytywanie związanego z byciem zalgoowanym wylogowanym
+        *trzeba zrobic taks ze w mapie Online_User robimy tak ze jesli jestes aktywni to ona zawsze zwrana naszmey uztykownikowi ktory coc che zrobic ten sam
+*
+
+
