@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uber Music</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #121212; color: white; padding: 20px; text-align: center; }
+        .container { background: #1e1e1e; max-width: 400px; margin: auto; padding: 30px 20px; border-radius: 10px; box-shadow: 0px 4px 15px rgba(0,0,0,0.5); }
+        input { width: 90%; padding: 15px; margin: 10px 0; border-radius: 20px; border: none; outline: none; font-size: 16px; background: #333; color: white; text-align: left; padding-left: 20px;}
+
+        /* Nowy przycisk dla pasażera */
+        .btn-skip { width: 95%; padding: 15px; margin-top: 15px; background-color: #ffffff; color: #000000; font-weight: bold; border-radius: 30px; border: none; cursor: pointer; transition: 0.3s; font-size: 14px;}
+        .btn-skip:hover { background-color: #e0e0e0; transform: scale(1.02); }
+
+        h2 { color: #1DB954; margin-bottom: 5px;}
+        p { color: #b3b3b3; margin-bottom: 25px; }
+
+        #suggestions { text-align: left; margin-top: 15px; }
+        .song-item { display: flex; align-items: center; background: #282828; padding: 10px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .song-item:hover { background: #3e3e3e; transform: scale(1.02); }
+        .song-img { width: 45px; height: 45px; border-radius: 4px; margin-right: 15px; }
+        .song-info { display: flex; flex-direction: column; }
+        .song-title { font-weight: bold; font-size: 15px; }
+        .song-artist { font-size: 13px; color: #b3b3b3; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🎵 Uber Music</h2>
+    <p>Przejmij głośniki w aucie!</p>
+
+    <input type="text" id="searchInput" placeholder="Wpisz piosenkę lub wykonawcę..." oninput="szukajPiosenek()">
+    <div id="suggestions"></div>
+
+    <hr style="border-color: #333; margin: 25px 0 15px 0;">
+
+    <button class="btn-skip" onclick="pominPiosenke()">
+        ⏭️ POMIŃ OBECNĄ PIOSENKĘ
+    </button>
+</div>
+
+<script>
+    function szukajPiosenek() {
+        let query = document.getElementById("searchInput").value;
+        let divWynikow = document.getElementById("suggestions");
+
+        if (query.length < 2) {
+            divWynikow.innerHTML = "";
+            return;
+        }
+
+        fetch(`/api/search-spotify?query=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(piosenki => {
+                divWynikow.innerHTML = "";
+                piosenki.forEach(piosenka => {
+                    let kafelek = document.createElement("div");
+                    kafelek.className = "song-item";
+                    kafelek.innerHTML = `
+                        <img src="${piosenka.image}" class="song-img">
+                        <div class="song-info">
+                            <span class="song-title">${piosenka.title}</span>
+                            <span class="song-artist">${piosenka.artist}</span>
+                        </div>
+                    `;
+                    kafelek.onclick = () => dodajDoKolejki(piosenka.title, piosenka.artist);
+                    divWynikow.appendChild(kafelek);
+                });
+            });
+    }
+
+    function dodajDoKolejki(title, artist) {
+        let url = `/api/play-spotify?title=${encodeURIComponent(title)}&artist=${encodeURIComponent(artist)}`;
+
+        fetch(url)
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+                document.getElementById("searchInput").value = "";
+                document.getElementById("suggestions").innerHTML = "";
+            })
+            .catch(error => {
+                alert("Błąd połączenia z serwerem.");
+            });
+    }
+
+    // Nowa funkcja do przycisku SKIP
+    function pominPiosenke() {
+        fetch('/api/skip-track')
+            .then(response => response.text())
+            .then(data => {
+                alert(data); // Wyświetli "Przełączono na następny utwór!" lub błąd IP
+            })
+            .catch(error => {
+                alert("Błąd połączenia z serwerem.");
+            });
+    }
+</script>
+
+</body>
+</html>

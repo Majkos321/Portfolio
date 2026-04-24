@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uber Music - Kokpit</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: white; text-align: center; padding: 20px; }
+        .container { background: #1e1e1e; max-width: 450px; margin: auto; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .btn { width: 100%; padding: 15px; margin: 10px 0; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        .btn-spotify { background-color: #1DB954; color: white; }
+        .btn-skip { background-color: #ffffff; color: black; }
+        .btn-block { background-color: #e91e63; color: white; }
+        .info-box { background: #282828; padding: 15px; border-radius: 10px; margin: 20px 0; text-align: left; font-size: 14px; }
+        h2 { color: #1DB954; }
+        span { color: #1DB954; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🎛️ Panel Kierowcy</h2>
+
+    <button class="btn btn-spotify" onclick="window.location.href='/login-spotify'">
+        1. ZALOGUJ / ODŚWIEŻ SESJĘ
+    </button>
+
+    <hr style="border: 0.5px solid #333; margin: 20px 0;">
+
+    <h3>Odtwarzacz</h3>
+    <button class="btn btn-skip" onclick="controlAction('/api/skip-track')">
+        ⏭️ NASTĘPNY UTWÓR (SKIP)
+    </button>
+
+    <div class="info-box">
+        Ostatnia aktywność IP: <span id="lastIp">Ładowanie...</span><br>
+        Zablokowanych osób: <span id="blockedCount">0</span>
+    </div>
+
+    <button class="btn btn-block" onclick="blockAction()">
+        🚫 ZABLOKUJ OSTATNIE IP
+    </button>
+</div>
+
+<script>
+    // Pobieraj status co 5 sekund, żeby widzieć kto "psoci"
+    function updateStatus() {
+        fetch('/api/admin/status')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('lastIp').innerText = data.lastIp;
+                document.getElementById('blockedCount').innerText = data.blockedCount;
+            });
+    }
+
+    function controlAction(url) {
+        fetch(url).then(res => res.text()).then(txt => alert(txt));
+    }
+
+    function blockAction() {
+        if(confirm("Czy na pewno chcesz zablokować ostatniego pasażera?")) {
+            fetch('/api/admin/block-last', { method: 'POST' })
+                .then(res => res.text())
+                .then(txt => {
+                    alert(txt);
+                    updateStatus();
+                });
+        }
+    }
+
+    setInterval(updateStatus, 5000);
+    updateStatus();
+</script>
+
+</body>
+</html>
